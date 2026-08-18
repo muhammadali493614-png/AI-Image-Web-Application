@@ -1,0 +1,41 @@
+# ==========================================
+# SafeVision AI — Python Dependencies
+# ==========================================
+# Install with:  pip install -r requirements.txt --break-system-packages
+# (drop --break-system-packages if you're inside a virtualenv, which you should be)
+
+# --- Core web framework ---
+Flask==3.0.3
+Werkzeug==3.0.3
+
+# --- Security (rate limiting, CSRF protection) ---
+Flask-Limiter==3.7.0
+Flask-WTF==1.2.1
+
+# --- Config / secrets loading ---
+python-dotenv==1.0.1
+
+# --- Computer vision + YOLOv8 model ---
+ultralytics==8.2.103
+
+# opencv-contrib-python (NOT plain opencv-python) — the "contrib" build
+# includes cv2.face (LBPHFaceRecognizer), which utils/face_recognition_helper.py
+# needs for the profile-photo -> live-camera name recognition feature.
+# Installing both opencv-python and opencv-contrib-python in the same
+# environment causes import conflicts — make sure only this one is installed:
+#   pip uninstall opencv-python -y   (if it's currently installed)
+#   pip install opencv-contrib-python==4.10.0.84 --break-system-packages
+opencv-contrib-python==4.10.0.84
+
+# NumPy pinned below 2.0 for compatibility with this ultralytics/opencv
+# combination — some builds break silently on NumPy 2.x.
+numpy<2.0
+
+# --- PDF report generation ---
+# utils/report_generator.py builds the audit-report PDFs. If it actually
+# imports fpdf2 instead of reportlab, swap the line below accordingly —
+# check the top of that file for its real import.
+reportlab==4.2.2
+
+# --- Production WSGI server (used by the Procfile on Render/Railway) ---
+gunicorn==22.0.0

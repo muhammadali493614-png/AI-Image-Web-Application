@@ -1,0 +1,74 @@
+# ==========================================
+# SafeVision AI — .gitignore
+# ==========================================
+
+# --- Virtual environments ---
+.venv/
+.venv-1/
+venv/
+env/
+ENV/
+
+# --- Python bytecode / cache ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+
+# --- Secrets (NEVER commit these) ---
+.env
+.env.local
+*.pem
+*.key
+
+# --- Database (contains real user data — don't commit) ---
+database/*.db
+database/*.sqlite3
+database/*.db-journal
+
+# --- User-generated content (uploads, detection results) ---
+# Keep the folders in git (via .gitkeep) but not their contents.
+uploads/images/*
+uploads/videos/*
+uploads/profile_photos/*
+models/face_samples/*
+results/annotated_images/*
+results/annotated_videos/*
+results/reports/*
+
+!uploads/images/.gitkeep
+!uploads/videos/.gitkeep
+!uploads/profile_photos/.gitkeep
+!models/face_samples/.gitkeep
+!results/annotated_images/.gitkeep
+!results/annotated_videos/.gitkeep
+!results/reports/.gitkeep
+
+# --- YOLO / Ultralytics run artifacts (auto-generated, can be huge) ---
+runs/
+
+# --- Model weights ---
+# Large model files should NOT be uploaded to GitHub.
+models/*.pt
+*.pt
+
+# --- Logs ---
+logs/*.log
+
+# --- Model validation output ---
+model_validation_report.txt
+runs/detect/val*/
+
+# --- IDE / editor ---
+.vscode/
+.idea/
+*.swp
+
+# --- OS junk files ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- ngrok binaries (if downloaded into the project folder) ---
+ngrok.exe
+ngrok

@@ -1,0 +1,82 @@
+/* ==========================================
+   FILE UPLOAD & DRAG/DROP STYLES
+   ========================================== */
+.upload-container {
+    margin-top: 20px;
+    text-align: center;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.upload-box {
+    display: block;
+    border: 2px dashed var(--accent-blue, #31d6ff);
+    background-color: var(--card-bg, #111d4a);
+    padding: 40px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.upload-box:hover,
+.upload-box.drag-over {
+    background-color: rgba(49, 214, 255, 0.12);
+    border-color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(49, 214, 255, 0.2);
+}
+
+.upload-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.upload-box:hover .upload-icon {
+    transform: scale(1.15);
+}
+
+.upload-box h3 {
+    font-size: 1.2rem;
+    color: var(--text-main, #ffffff);
+    margin-bottom: 8px;
+    font-weight: 600;
+    word-break: break-word;
+}
+
+.upload-box p {
+    font-size: 0.85rem;
+    color: var(--text-muted, #8d99ae);
+}
+
+/* Result Display Container Styling */
+.result-display {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: var(--card-bg, #111d4a);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.result-display h3 {
+    color: var(--accent-blue, #31d6ff);
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+    .upload-box {
+        padding: 28px 16px;
+    }
+
+    .upload-icon {
+        font-size: 2.2rem;
+    }
+
+    .upload-box h3 {
+        font-size: 1.05rem;
+    }
+}

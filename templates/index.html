@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SafeVision AI - PPE Compliance System | NESCOM</title>
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/upload.css') }}">
+<style>.input-field{background-color:var(--card-bg,#1e293b);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:6px;padding:10px;font-size:.95rem;outline:none;box-sizing:border-box;min-height:44px}.input-field:focus{border-color:#0284c7}.toggle-switch{width:22px;height:22px;cursor:pointer;accent-color:#0284c7}</style>
+</head><body>
+
+<!-- Mobile hamburger toggle -->
+<button type="button" class="menu-toggle" id="menuToggleBtn" onclick="toggleSidebar()" aria-label="Toggle navigation menu">☰</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<div id="loginModal" class="auth-modal">
+<div class="card auth-card">
+<h2 style="text-align:center;margin-bottom:8px">🛡️ SafeVision AI</h2>
+<p style="text-align:center;color:var(--text-muted,#9ca3af);margin-bottom:25px;font-size:.9rem">Sign in to access safety controls</p>
+
+<form id="loginForm">
+<div style="margin-bottom:15px"><label style="display:block;margin-bottom:5px;font-size:.85rem">Username</label>
+<input type="text" id="loginUser" class="input-field" style="width:100%" placeholder="Enter username" required></div>
+<div style="margin-bottom:8px"><label style="display:block;margin-bottom:5px;font-size:.85rem">Password</label>
+<input type="password" id="loginPass" class="input-field" style="width:100%" placeholder="Enter password" required></div>
+<p style="text-align:right;margin:0 0 20px"><a href="#" onclick="showForgotPasswordModal(event)" style="color:#0284c7;font-size:.8rem">Forgot password?</a></p>
+<button type="submit" class="btn-primary" style="width:100%;padding:12px;border-radius:6px;background-color:#0284c7;color:#fff;border:none;font-weight:bold;cursor:pointer">🔐 Login to System</button>
+</form>
+<p id="loginError" style="color:#ef4444;font-size:.85rem;text-align:center;margin-top:15px;display:none"></p>
+<p id="showRegisterText" style="text-align:center;color:var(--text-muted,#9ca3af);font-size:.85rem;margin-top:15px">
+  Don't have an account? <a href="#" onclick="toggleAuthMode(event)" style="color:#0284c7;font-weight:bold">Sign Up</a>
+</p>
+
+<form id="registerForm" style="display:none">
+<div style="margin-bottom:15px"><label style="display:block;margin-bottom:5px;font-size:.85rem">Full Name</label>
+<input type="text" id="regFullName" class="input-field" style="width:100%" placeholder="Enter full name" required></div>
+<div style="margin-bottom:15px"><label style="display:block;margin-bottom:5px;font-size:.85rem">Username</label>
+<input type="text" id="regUsername" class="input-field" style="width:100%" placeholder="Choose a username" required></div>
+<div style="margin-bottom:15px"><label style="display:block;margin-bottom:5px;font-size:.85rem">Email</label>
+<input type="email" id="regEmail" class="input-field" style="width:100%" placeholder="Enter email" required></div>
+<div style="margin-bottom:20px"><label style="display:block;margin-bottom:5px;font-size:.85rem">Password</label>
+<input type="password" id="regPassword" class="input-field" style="width:100%" placeholder="Choose a password (min. 6 chars)" required></div>
+<button type="submit" class="btn-primary" style="width:100%;padding:12px;border-radius:6px;background-color:#16a34a;color:#fff;border:none;font-weight:bold;cursor:pointer">✅ Create Account</button>
+</form>
+<p id="registerError" style="color:#ef4444;font-size:.85rem;text-align:center;margin-top:15px;display:none"></p>
+<p id="registerSuccess" style="color:#22c55e;font-size:.85rem;text-align:center;margin-top:15px;display:none"></p>
+<p id="showLoginText" style="display:none;text-align:center;color:var(--text-muted,#9ca3af);font-size:.85rem;margin-top:15px">
+  Already have an account? <a href="#" onclick="toggleAuthMode(event)" style="color:#0284c7;font-weight:bold">Log In</a>
+</p>
+
+</div></div>
+
+<!-- Forgot Password Modal -->
+<div id="forgotPasswordModal" class="auth-modal" style="z-index:10000">
+<div class="card auth-card">
+<h2 style="text-align:center;margin-bottom:8px">🔑 Reset Password</h2>
+<p style="text-align:center;color:var(--text-muted,#9ca3af);margin-bottom:25px;font-size:.9rem">Enter your account email — we'll send you a reset link</p>
+<form id="forgotPasswordForm">
+<div style="margin-bottom:20px"><label style="display:block;margin-bottom:5px;font-size:.85rem">Email Address</label>
+<input type="email" id="forgotEmail" class="input-field" style="width:100%" placeholder="Enter your email" required></div>
+<button type="submit" class="btn-primary" style="width:100%;padding:12px;border-radius:6px;background-color:#0284c7;color:#fff;border:none;font-weight:bold;cursor:pointer">📧 Send Reset Link</button>
+</form>
+<p id="forgotPasswordMessage" style="font-size:.85rem;text-align:center;margin-top:15px;display:none"></p>
+<p style="text-align:center;color:var(--text-muted,#9ca3af);font-size:.85rem;margin-top:15px">
+  <a href="#" onclick="hideForgotPasswordModal(event)" style="color:#0284c7;font-weight:bold">← Back to Login</a>
+</p>
+</div></div>
+
+<aside class="sidebar" id="sidebar">
+<div class="logo"><h2>🛡️ SafeVision AI</h2><p>NUTECH - NESCOM Project</p></div>
+<nav>
+<a href="#" data-page="dashboard" onclick="show('dashboard',this)">📊 Dashboard</a>
+<a href="#" data-page="upload" onclick="show('upload',this)">📁 Upload Image/Video</a>
+<a href="#" data-page="livecam" onclick="show('livecam',this)">📹 Live Camera Stream</a>
+<a href="#" data-page="targets" onclick="show('targets',this)">🎯 Target PPE Checklist</a>
+<a href="#" data-page="reports" onclick="show('reports',this)">📑 Audit Reports</a>
+<a href="#" data-page="history" onclick="show('history',this)">📜 Detection History</a>
+<a href="#" data-page="profile" onclick="show('profile',this)">👤 User Profile</a>
+<a href="#" data-page="admin" id="admin-nav-link" onclick="show('admin',this)" style="display:none">🛠️ Admin Panel</a>
+</nav></aside>
+
+<main class="main-content">
+<header class="top-bar" style="display:flex;justify-content:space-between;align-items:center">
+<h1>PPE Compliance Monitoring System</h1>
+
+<div class="user-profile" id="header-guest-actions" style="display:flex;align-items:center;gap:10px">
+<button onclick="showLoginModal()" style="background-color:#0284c7;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:.85rem">🔐 Login</button>
+<button onclick="showSignupModal()" style="background-color:#16a34a;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:.85rem">📝 Sign Up</button>
+</div>
+
+<div class="user-profile" id="header-user-actions" style="display:none;align-items:center;gap:15px">
+<img id="header-user-avatar" src="" alt="" style="width:32px;height:32px;border-radius:50%;object-fit:cover;display:none;border:2px solid #0284c7">
+<span>Welcome, <strong id="header-user-name">{{ session.get('full_name', 'Guest') }}</strong> <span id="header-user-role" style="color:var(--text-muted,#9ca3af);font-size:.8rem"></span></span>
+<button onclick="logoutUser()" style="background:rgba(239,68,68,.2);color:#ef4444;border:1px solid #ef4444;padding:5px 12px;border-radius:5px;cursor:pointer;font-size:.85rem">Logout</button>
+</div>
+
+</header>
+
+<section id="dashboard" class="page">
+<h2>System Overview</h2>
+<p style="color:var(--text-muted,#9ca3af);max-width:800px;line-height:1.6;margin:10px 0 25px">
+SafeVision AI is a real-time PPE (Personal Protective Equipment) compliance monitoring system, developed for the NUTECH–NESCOM project. Powered by a custom-trained YOLOv8 deep learning model, it automatically detects safety helmets, vests, gloves, boots, and eyewear across uploaded images/videos and live camera feeds — flagging violations instantly and generating downloadable PDF audit reports to help site supervisors enforce workplace safety standards. Registered users who upload a profile photo are also identified by name on the live camera feed.
+</p>
+<div class="grid">
+<div class="card"><h3>Total Scanned</h3><h2 id="total-scanned">0</h2></div>
+<div class="card"><h3>Compliant Workers</h3><h2 id="compliant-workers" style="color:var(--success,#22c55e)">0</h2></div>
+<div class="card"><h3>Safety Violations</h3><h2 id="safety-violations" style="color:var(--danger,#ef4444)">0</h2></div>
+<div class="card"><h3>Model Accuracy</h3><h2 id="model-accuracy">0%</h2></div>
+</div>
+
+<div class="grid" style="margin-top:25px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+<div class="card" style="padding:20px">
+<h3 style="margin-bottom:15px">📈 Violations Trend (Last 7 Days)</h3>
+<canvas id="chart-trend" height="220"></canvas>
+</div>
+<div class="card" style="padding:20px">
+<h3 style="margin-bottom:15px">🥧 Compliance Ratio</h3>
+<canvas id="chart-compliance" height="220"></canvas>
+</div>
+<div class="card" style="padding:20px;grid-column:1/-1">
+<h3 style="margin-bottom:15px">📊 Detections by Source</h3>
+<canvas id="chart-source" height="150"></canvas>
+</div>
+</div>
+
+<div style="margin-top:30px;padding-top:20px;border-top:1px solid rgba(255,255,255,.08);color:var(--text-muted,#9ca3af);font-size:.9rem">
+<p style="margin-bottom:6px">👨‍💻 <strong>Developed by:</strong> Muhammad Ali, Abdullah Inayat, Malik Anas Anwar</p>
+<p>📧 <strong>Have a query?</strong> Reach us at <a href="mailto:safevisionai.nescom@gmail.com" style="color:#0284c7">safevisionai.nescom@gmail.com</a></p>
+</div>
+</section>
+
+<section id="upload" class="page" style="display:none">
+<h2>Upload Image or Video for AI Detection</h2>
+<div class="upload-container">
+<form action="/detect" method="POST" enctype="multipart/form-data">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<label class="upload-box" for="fileInput">
+<div class="upload-icon">📤</div>
+<h3>Drag & Drop or Click to Upload</h3>
+<p>Supports JPG, PNG, WEBP, MP4, AVI (Max 50MB)</p>
+<input type="file" id="fileInput" name="file" accept="image/*,video/*" required hidden>
+</label><br>
+<button type="submit" class="btn-primary">⚡ Run AI Detection</button>
+</form></div>
+{% if result_image or result_video %}
+<div class="result-display" style="margin-top:30px;text-align:center">
+<h3>Latest Detection Output</h3><br>
+{% if result_image %}<img src="{{ result_image }}" alt="Annotated Result" style="max-width:100%;border-radius:8px;border:2px solid var(--accent-blue,#0284c7)">{% endif %}
+{% if result_video %}<video controls autoplay loop style="max-width:100%;border-radius:8px;border:2px solid var(--accent-blue,#0284c7)"><source src="{{ result_video }}" type="video/mp4">Your browser does not support HTML video playback.</video>{% endif %}
+{% if report_url %}<br><br><a href="{{ report_url }}" target="_blank" class="btn-primary" style="text-decoration:none;padding:10px 18px;border-radius:6px;background-color:#16a34a;color:#fff;font-weight:bold;display:inline-block">📄 Download Detection Report</a>{% endif %}
+</div>
+{% endif %}
+</section>
+
+<section id="livecam" class="page" style="display:none">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;flex-wrap:wrap;gap:10px">
+<div><h2>Real-Time Surveillance & PPE Compliance</h2>
+<p style="color:var(--text-muted,#9ca3af)">Monitoring Live Feed for Helmet, Safety Vest, Gloves, Safety Shoes & Protective Glasses — registered users are identified by name automatically.</p></div>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<button id="recordToggleBtn" class="btn-primary" style="padding:10px 18px;border-radius:6px;background-color:#0284c7;color:#fff;border:none;font-weight:bold;cursor:pointer">⏺ Start Recording</button>
+<a href="/download_pdf_report" class="btn-primary" style="text-decoration:none;padding:10px 18px;border-radius:6px;background-color:#0284c7;color:#fff;font-weight:bold;display:inline-flex;align-items:center;justify-content:center">📄 Snapshot Report</a>
+</div>
+</div>
+
+<p id="recording-status" style="color:var(--text-muted,#9ca3af);margin-bottom:10px"></p>
+<div id="recording-result" style="display:none;background-color:var(--card-bg,#1e293b);padding:15px;border-radius:8px;border:1px solid rgba(255,255,255,.1);margin-bottom:15px"></div>
+
+<div id="safety-alert-banner" style="display:none;padding:12px;border-radius:6px;background-color:#ef4444;color:#fff;text-align:center;font-weight:bold;margin-bottom:15px">⚠️ SAFETY VIOLATION DETECTED! REQUIRED PPE MISSING!</div>
+<div style="display:flex;gap:20px;flex-wrap:wrap">
+<div class="stream-container" style="flex:2;min-width:280px">
+<img src="{{ url_for('video_feed') }}" alt="Live Camera Feed Stream" style="width:100%;max-width:800px;border-radius:8px;border:2px solid var(--accent-blue,#0284c7)">
+</div>
+<div class="ppe-status-panel" style="flex:1;background-color:var(--card-bg,#1e293b);padding:20px;border-radius:8px;border:1px solid rgba(255,255,255,.1);min-width:260px">
+<h3 style="margin-bottom:15px;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:8px">🛡️ Live Item Status</h3>
+<ul style="list-style:none;padding:0;margin:0;line-height:2.2">
+<li style="display:flex;justify-content:space-between;align-items:center"><span>🪖 Helmet:</span><span id="status-helmet" style="font-weight:bold;color:#ef4444">❌ Missing</span></li>
+<li style="display:flex;justify-content:space-between;align-items:center"><span>🦺 Safety Vest:</span><span id="status-vest" style="font-weight:bold;color:#ef4444">❌ Missing</span></li>
+<li style="display:flex;justify-content:space-between;align-items:center"><span>🧤 Gloves:</span><span id="status-gloves" style="font-weight:bold;color:#ef4444">❌ Missing</span></li>
+<li style="display:flex;justify-content:space-between;align-items:center"><span>🥾 Safety Shoes:</span><span id="status-shoes" style="font-weight:bold;color:#ef4444">❌ Missing</span></li>
+<li style="display:flex;justify-content:space-between;align-items:center"><span>🥽 Glasses:</span><span id="status-glasses" style="font-weight:bold;color:#ef4444">❌ Missing</span></li>
+</ul>
+<hr style="margin:15px 0;border:none;border-top:1px solid rgba(255,255,255,.1)">
+<div style="margin-bottom:12px">
+<span style="font-size:.9em;color:var(--text-muted,#9ca3af)">🧑‍🤝‍🧑 Recognized Person(s):</span>
+<div id="recognized-names" style="margin-top:6px;font-weight:bold;color:#0284c7">Scanning...</div>
+</div>
+<hr style="margin:15px 0;border:none;border-top:1px solid rgba(255,255,255,.1)">
+<div style="text-align:center"><span style="font-size:.9em;color:var(--text-muted,#9ca3af)">Overall Status:</span>
+<h3 id="overall-status" style="color:#ef4444;margin-top:5px">Analyzing Feed...</h3></div>
+</div></div></section>
+
+<section id="targets" class="page" style="display:none">
+<h2>🎯 Target PPE Compliance Checklist</h2>
+<p style="color:var(--text-muted,#9ca3af);margin-bottom:20px">Configure mandatory safety requirements for site compliance. Unchecked items won't trigger safety violations.</p>
+<p id="targets-admin-note" style="display:none;color:#f59e0b;font-size:.85rem;margin-bottom:15px">🔒 Only Admins can change target PPE rules. Contact your Admin to request a change.</p>
+<div class="card" style="max-width:550px;background-color:var(--card-bg,#1e293b);padding:25px;border-radius:8px;border:1px solid rgba(255,255,255,.1)">
+<form id="targetsForm">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.05)"><span style="font-size:1.05rem">🪖 Safety Helmet Mandate</span><input type="checkbox" id="target-helmet" class="toggle-switch" checked></div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.05)"><span style="font-size:1.05rem">🦺 High-Viz Safety Vest Mandate</span><input type="checkbox" id="target-vest" class="toggle-switch" checked></div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.05)"><span style="font-size:1.05rem">🧤 Safety Gloves Mandate</span><input type="checkbox" id="target-gloves" class="toggle-switch"></div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.05)"><span style="font-size:1.05rem">🥾 Safety Boots/Shoes Mandate</span><input type="checkbox" id="target-shoes" class="toggle-switch" checked></div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:25px"><span style="font-size:1.05rem">🥽 Protective Goggles Mandate</span><input type="checkbox" id="target-glasses" class="toggle-switch"></div>
+<button type="button" id="save-targets-btn" onclick="saveTargets()" class="btn-primary" style="width:100%;padding:12px;background-color:#0284c7;color:#fff;border:none;border-radius:6px;font-weight:bold;cursor:pointer">💾 Save Target Rules</button>
+</form></div></section>
+
+<section id="reports" class="page" style="display:none">
+<h2>📑 Audit & Compliance Reports</h2>
+<p style="color:var(--text-muted,#9ca3af);margin-bottom:25px">Export generated inspection logs and site summary reports.</p>
+<div class="grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
+<div class="card" style="background-color:var(--card-bg,#1e293b);padding:25px;border-radius:8px;border:1px solid rgba(255,255,255,.1)">
+<h3 style="margin-bottom:10px">📄 Live Snapshot PDF Report</h3>
+<p style="color:var(--text-muted,#9ca3af);font-size:.9rem;margin-bottom:20px">Download an instant snapshot of the current live camera PPE status.</p>
+<a href="/download_pdf_report" class="btn-primary" style="display:inline-block;text-decoration:none;padding:10px 18px;border-radius:6px;background-color:#0284c7;color:#fff;font-weight:bold">Download PDF Report</a>
+</div>
+<div class="card" style="background-color:var(--card-bg,#1e293b);padding:25px;border-radius:8px;border:1px solid rgba(255,255,255,.1)">
+<h3 style="margin-bottom:10px">📊 Per-Detection Reports</h3>
+<p style="color:var(--text-muted,#9ca3af);font-size:.9rem;margin-bottom:20px">Every image/video upload and every live recording session automatically generates its own PDF report — find them in the Detection History table with a direct download link.</p>
+</div>
+</div></section>
+
+<section id="history" class="page" style="display:none">
+<h2>Recent Detection Logs</h2>
+<div class="table-responsive" style="margin-top:20px">
+<table>
+<thead><tr><th>ID</th><th>Source</th><th>Status</th><th>File</th><th>Report</th><th>Timestamp</th></tr></thead>
+<tbody id="detection-logs-body">
+{% if logs %}{% for log in logs %}
+<tr style="border-bottom:1px solid rgba(255,255,255,.05)">
+<td>#{{ log['id'] }}</td>
+<td>{{ log['source_type'] }}</td>
+<td><span style="color:var(--success,#22c55e)">{{ log['status'] }}</span></td>
+<td><a href="{{ log['file_path'] }}" target="_blank" style="color:var(--accent-blue,#0284c7)">View File</a></td>
+<td>{% if log['report_path'] %}<a href="{{ log['report_path'] }}" target="_blank" style="color:#16a34a">📄 Report</a>{% else %}—{% endif %}</td>
+<td>{{ log['timestamp'] }}</td>
+</tr>
+{% endfor %}{% else %}
+<tr><td colspan="6" style="padding:15px;text-align:center;color:var(--text-muted,#9ca3af)">No detection logs found in database.</td></tr>
+{% endif %}
+</tbody></table>
+</div>
+
+<h2 style="margin-top:40px">🔐 Login History</h2>
+<div class="table-responsive" style="margin-top:20px">
+<table>
+<thead><tr><th>ID</th><th>Username</th><th>IP Address</th><th>Login Time</th></tr></thead>
+<tbody id="login-logs-body">
+{% if login_logs %}{% for log in login_logs %}
+<tr style="border-bottom:1px solid rgba(255,255,255,.05)">
+<td>#{{ log['id'] }}</td>
+<td>{{ log['username'] }}</td>
+<td>{{ log['ip_address'] }}</td>
+<td>{{ log['login_time'] }}</td>
+</tr>
+{% endfor %}{% else %}
+<tr><td colspan="4" style="padding:15px;text-align:center;color:var(--text-muted,#9ca3af)">No login history found.</td></tr>
+{% endif %}
+</tbody></table>
+</div>
+</section>
+
+<section id="profile" class="page" style="display:none">
+<h2>👤 User Profile & Credentials</h2>
+<p style="color:var(--text-muted,#9ca3af);margin-bottom:20px">Manage inspector account credentials and notification preferences. Upload a clear, front-facing photo below so this account can be identified by name on the Live Camera Stream.</p>
+<div class="card" style="max-width:500px;background-color:var(--card-bg,#1e293b);padding:25px;border-radius:8px;border:1px solid rgba(255,255,255,.1)">
+<form id="profileForm" onsubmit="updateProfile(event)">
+
+<div style="margin-bottom:20px;text-align:center">
+<img id="profile-photo-preview" src="" alt="Profile photo preview"
+     style="width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid #0284c7;display:none;margin:0 auto 12px">
+<div id="profile-photo-placeholder" style="width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:2.2rem">🧑</div>
+<label for="prof-photo" class="btn-primary" style="display:inline-block;padding:8px 16px;border-radius:6px;background-color:#0284c7;color:#fff;font-weight:bold;cursor:pointer;font-size:.85rem">📷 Choose Profile Photo</label>
+<input type="file" id="prof-photo" name="photo" accept="image/jpeg,image/png,image/webp" hidden>
+<p style="color:var(--text-muted,#9ca3af);font-size:.75rem;margin-top:8px">Used to identify you by name on the Live Camera Stream. Upload a clear, front-facing photo (JPG/PNG/WEBP).</p>
+<p id="prof-photo-message" style="font-size:.8rem;margin-top:6px;display:none"></p>
+</div>
+
+<div style="margin-bottom:15px"><label style="display:block;margin-bottom:5px">Full Name:</label>
+<input type="text" id="prof-name" class="input-field" style="width:100%" value="{{ session.get('full_name', '') }}" required></div>
+<div style="margin-bottom:20px"><label style="display:block;margin-bottom:5px">Email Address:</label>
+<input type="email" id="prof-email" class="input-field" style="width:100%" required></div>
+<button type="submit" class="btn-primary" style="padding:10px 20px;background-color:#0284c7;color:#fff;border:none;border-radius:6px;font-weight:bold;cursor:pointer">💾 Save Profile Changes</button>
+</form></div></section>
+
+<section id="admin" class="page" style="display:none">
+<h2>🛠️ Admin Panel — User Management</h2>
+<p style="color:var(--text-muted,#9ca3af);margin-bottom:20px">Grant or revoke Admin access, and remove accounts. Only visible to Admins.</p>
+<div class="table-responsive" style="margin-top:10px">
+<table>
+<thead><tr><th>ID</th><th>Full Name</th><th>Username</th><th>Email</th><th>Role</th><th>Actions</th></tr></thead>
+<tbody id="admin-users-body">
+<tr><td colspan="6" style="padding:15px;text-align:center;color:var(--text-muted,#9ca3af)">Loading users...</td></tr>
+</tbody></table>
+</div>
+</section>
+
+</main>
+
+<!-- Tells main.js which tab to open on load: if this render just came back
+     from a /detect upload (result_image/result_video present), open the
+     Upload tab so the person immediately sees their result instead of the
+     Dashboard flashing over it. Falls back to "dashboard" on a normal / GET. -->
+<script>
+  window.__INITIAL_TAB__ = "{{ 'upload' if (result_image or result_video) else 'dashboard' }}";
+  // Set when /detect or /download_pdf_report redirected a logged-out user
+  // back here (see login_required() in app.py) — tells main.js to open the
+  // login modal instead of silently landing on the Dashboard.
+  window.__AUTH_REQUIRED__ = "{{ 'true' if auth_required else 'false' }}" === "true";
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body></html>

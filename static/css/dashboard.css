@@ -1,0 +1,125 @@
+/* ==========================================
+   DASHBOARD & STATS CARDS STYLES
+   ========================================== */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.card {
+    background-color: var(--card-bg, #111d4a);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    min-width: 0; /* lets cards shrink inside the grid instead of overflowing */
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(49, 214, 255, 0.15);
+}
+
+.card h3 {
+    font-size: 0.9rem;
+    color: var(--text-muted, #8d99ae);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card h2 {
+    font-size: 2rem;
+    color: var(--accent-blue, #31d6ff);
+    font-weight: 700;
+}
+
+/* Chart canvases must not force their parent card wider than the viewport */
+.card canvas {
+    max-width: 100%;
+}
+
+/* Live Stream Box Styling */
+.stream-container {
+    background-color: #000000;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    margin-top: 20px;
+    border: 2px solid rgba(49, 214, 255, 0.4);
+    box-shadow: 0 0 20px rgba(49, 214, 255, 0.2);
+}
+
+.stream-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* ==========================================
+   DATA TABLES (History / Admin)
+   ========================================== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table thead th {
+    background-color: var(--card-bg, #111d4a);
+    text-align: left;
+    padding: 12px;
+    white-space: nowrap;
+}
+
+table tbody td {
+    padding: 12px;
+    white-space: nowrap;
+}
+
+table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+/* ==========================================
+   RESPONSIVE OVERRIDES
+   ========================================== */
+@media (max-width: 1024px) {
+    .grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    .card h2 {
+        font-size: 1.6rem;
+    }
+
+    .stream-container {
+        min-height: 220px;
+    }
+
+    .ppe-status-panel {
+        min-width: 0 !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .card h2 {
+        font-size: 1.4rem;
+    }
+}
