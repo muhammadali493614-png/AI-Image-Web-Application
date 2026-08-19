@@ -47,11 +47,6 @@ results/reports/*
 # --- YOLO / Ultralytics run artifacts (auto-generated, can be huge) ---
 runs/
 
-# --- Model weights ---
-# Large model files should NOT be uploaded to GitHub.
-models/*.pt
-*.pt
-
 # --- Logs ---
 logs/*.log
 
@@ -71,4 +66,3 @@ desktop.ini
 
 # --- ngrok binaries (if downloaded into the project folder) ---
 ngrok.exe
-ngrok
