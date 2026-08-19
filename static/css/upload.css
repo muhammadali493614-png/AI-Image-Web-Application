@@ -1,5 +1,5 @@
 /* ==========================================
-   FILE UPLOAD & DRAG/DROP STYLES
+   FILE UPLOAD & DRAG/DROP
    ========================================== */
 .upload-container {
     margin-top: 20px;
@@ -10,22 +10,45 @@
 }
 
 .upload-box {
+    position: relative;
     display: block;
-    border: 2px dashed var(--accent-blue, #31d6ff);
-    background-color: var(--card-bg, #111d4a);
-    padding: 40px 20px;
-    border-radius: 12px;
+    border: 1px dashed rgba(255, 182, 39, 0.45);
+    background-color: var(--card-bg, #121826);
+    padding: 44px 20px;
+    border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
+
+.upload-box::before,
+.upload-box::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 10px;
+    pointer-events: none;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.upload-box::before { left: 10px; border-left: 2px solid var(--accent-amber, #ffb627); border-top: 2px solid var(--accent-amber, #ffb627); }
+.upload-box::after  { right: 10px; border-right: 2px solid var(--accent-amber, #ffb627); border-top: 2px solid var(--accent-amber, #ffb627); }
 
 .upload-box:hover,
 .upload-box.drag-over {
-    background-color: rgba(49, 214, 255, 0.12);
-    border-color: #ffffff;
+    background-color: rgba(53, 201, 230, 0.06);
+    border-color: var(--accent-blue, #35c9e6);
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(49, 214, 255, 0.2);
+    box-shadow: 0 10px 28px rgba(53, 201, 230, 0.18);
+}
+
+.upload-box:hover::before,
+.upload-box:hover::after,
+.upload-box.drag-over::before,
+.upload-box.drag-over::after {
+    opacity: 1;
 }
 
 .upload-icon {
@@ -36,40 +59,59 @@
 }
 
 .upload-box:hover .upload-icon {
-    transform: scale(1.15);
+    transform: scale(1.12);
 }
 
 .upload-box h3 {
-    font-size: 1.2rem;
-    color: var(--text-main, #ffffff);
+    font-family: var(--font-display, 'Space Grotesk', sans-serif);
+    font-size: 1.15rem;
+    color: var(--text-main, #eef1f7);
     margin-bottom: 8px;
     font-weight: 600;
     word-break: break-word;
 }
 
 .upload-box p {
-    font-size: 0.85rem;
-    color: var(--text-muted, #8d99ae);
+    font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    color: var(--text-muted, #8791a6);
 }
 
-/* Result Display Container Styling */
+/* Result Display Container */
 .result-display {
+    position: relative;
     margin-top: 30px;
-    padding: 20px;
-    background-color: var(--card-bg, #111d4a);
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 22px;
+    background-color: var(--card-bg, #121826);
+    border-radius: 10px;
+    border: 1px solid var(--card-border, rgba(255,255,255,.07));
+}
+
+.result-display::before {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 20px;
+    height: 20px;
+    border-left: 2px solid var(--accent-blue, #35c9e6);
+    border-top: 2px solid var(--accent-blue, #35c9e6);
+    pointer-events: none;
 }
 
 .result-display h3 {
-    color: var(--accent-blue, #31d6ff);
+    font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent-blue, #35c9e6);
     margin-bottom: 15px;
-    font-size: 1.1rem;
+    font-size: 0.92rem;
 }
 
 @media (max-width: 768px) {
     .upload-box {
-        padding: 28px 16px;
+        padding: 30px 16px;
     }
 
     .upload-icon {

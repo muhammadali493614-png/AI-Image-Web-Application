@@ -58,10 +58,33 @@ class Config:
     # LBPH prediction returns a *distance* (lower = more confident match).
     # Anything above this threshold is reported as "Unknown" rather than
     # risking a wrong name on the live feed. Tune via .env if you're
-    # getting too many/too few matches for your camera + lighting.
+    # getting too many/too few matches for your camera + lighting — watch
+    # the "distance=" values printed by recognize_faces_in_frame() (see
+    # DEBUG_LOG_CONFIDENCE in face_recognition_helper.py) to pick a good
+    # value: it should sit comfortably above your own typical match
+    # distance but below random strangers' distances.
     FACE_RECOGNITION_CONFIDENCE_THRESHOLD = float(
         os.environ.get("FACE_RECOGNITION_CONFIDENCE_THRESHOLD", 75)
     )
+
+    # --- DNN face DETECTOR (separate from the LBPH RECOGNIZER above) ---
+    # Optional but strongly recommended: OpenCV's SSD-based face detector,
+    # far more reliable than the Haar cascade fallback for off-angle faces
+    # and faces that are small/far from the camera. Automatically used
+    # once these two files are downloaded into models/ — see the one-time
+    # setup commands in _get_dnn_net() inside
+    # utils/face_recognition_helper.py. If they're missing, detection
+    # silently falls back to the Haar cascade (shorter range, frontal-only).
+    FACE_DETECTOR_PROTOTXT_PATH = os.path.join(FACE_MODEL_DIR, 'deploy.prototxt')
+    FACE_DETECTOR_MODEL_PATH = os.path.join(
+        FACE_MODEL_DIR, 'res10_300x300_ssd_iter_140000_fp16.caffemodel'
+    )
+    # Minimum DNN detector confidence (0-1) to count as a face at all —
+    # this is a *detection* threshold (is there a face here?), separate
+    # from FACE_RECOGNITION_CONFIDENCE_THRESHOLD above (whose face is it?).
+    # Lower it (e.g. 0.35) if distant/angled faces aren't being detected at
+    # all; raise it if you're getting false-positive face boxes.
+    FACE_DETECTION_CONFIDENCE = float(os.environ.get("FACE_DETECTION_CONFIDENCE", 0.5))
 
     # ==========================================
     # FLASK CORE

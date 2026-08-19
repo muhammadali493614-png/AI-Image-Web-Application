@@ -1,19 +1,34 @@
 /* ==========================================
-   GLOBAL THEME & LAYOUT STYLES
+   SafeVision AI — Global Theme & Layout
+   Design system: "Detection HUD" — industrial
+   control-room base with an object-detection
+   signature (bounding-box corner marks, mono
+   readouts) that reflects what the product does.
    ========================================== */
-:root {
-    --bg-primary: #0a1128;
-    --bg-secondary: #1c2541;
-    --card-bg: #111d4a;
-    --accent-blue: #31d6ff;
-    --text-main: #ffffff;
-    --text-muted: #8d99ae;
-    --success: #35e88a;
-    --danger: #ff4d4d;
-    --sidebar-width: 250px;
 
-    /* Fluid type scale (polish pass) */
-    --fs-h1: clamp(1.15rem, 1rem + 1vw, 1.6rem);
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root {
+    /* ---- Core palette ---- */
+    --bg-primary: #080b12;
+    --bg-secondary: #0d121c;
+    --card-bg: #121826;
+    --card-border: rgba(255, 255, 255, 0.07);
+    --accent-blue: #35c9e6;       /* live / interactive cyan */
+    --accent-amber: #ffb627;      /* signature — detection / safety amber */
+    --text-main: #eef1f7;
+    --text-muted: #8791a6;
+    --success: #34d399;
+    --danger: #ff5c72;
+    --sidebar-width: 260px;
+
+    /* ---- Type ---- */
+    --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
+    --font-body: 'Inter', 'Segoe UI', sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Consolas', monospace;
+
+    /* Fluid type scale */
+    --fs-h1: clamp(1.15rem, 1rem + 1vw, 1.65rem);
     --fs-h2: clamp(1.05rem, 0.95rem + 0.6vw, 1.3rem);
     --fs-body: clamp(0.85rem, 0.8rem + 0.2vw, 0.95rem);
 
@@ -25,32 +40,40 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--font-body);
 }
 
 html {
-    /* Prevents iOS Safari from auto-zooming on input focus (inputs are 16px+) */
     -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
 }
 
 body {
-    background-color: var(--bg-primary, #0a1128);
-    color: var(--text-main, #ffffff);
+    background-color: var(--bg-primary);
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    background-size: 42px 42px;
+    color: var(--text-main);
     display: flex;
     min-height: 100vh;
     overflow-x: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
 
 /* ==========================================
    SIDEBAR
    ========================================== */
 .sidebar {
-    width: var(--sidebar-width, 250px);
-    background-color: var(--bg-secondary, #1c2541);
-    padding: 25px 15px;
+    width: var(--sidebar-width);
+    background-color: var(--bg-secondary);
+    padding: 28px 16px;
     display: flex;
     flex-direction: column;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-right: 1px solid var(--card-border);
     position: fixed;
     top: 0;
     left: 0;
@@ -60,40 +83,58 @@ body {
 }
 
 .sidebar .logo h2 {
-    color: var(--accent-blue, #31d6ff);
-    font-size: 1.4rem;
-    margin-bottom: 5px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: var(--text-main);
+    font-size: 1.35rem;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .sidebar .logo p {
-    font-size: 0.75rem;
-    color: var(--text-muted, #8d99ae);
-    margin-bottom: 30px;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-amber);
+    margin-bottom: 32px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--card-border);
 }
 
 .sidebar nav {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 4px;
     overflow-y: auto;
 }
 
 .sidebar nav a {
-    color: var(--text-muted, #8d99ae);
+    color: var(--text-muted);
     text-decoration: none;
-    padding: 12px 15px;
+    padding: 12px 14px;
     border-radius: 8px;
-    font-size: 0.95rem;
-    transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+    font-size: 0.92rem;
+    font-weight: 500;
+    border-left: 2px solid transparent;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
     display: flex;
     align-items: center;
     min-height: var(--tap-target);
 }
 
-.sidebar nav a:hover,
+.sidebar nav a:hover {
+    background-color: rgba(53, 201, 230, 0.08);
+    color: var(--text-main);
+}
+
 .sidebar nav a.active {
-    background-color: var(--accent-blue, #31d6ff);
-    color: #000000;
+    background-color: rgba(255, 182, 39, 0.1);
+    color: var(--accent-amber);
+    border-left-color: var(--accent-amber);
     font-weight: 600;
 }
 
@@ -101,7 +142,6 @@ body {
     transform: scale(0.98);
 }
 
-/* Hamburger toggle button — hidden on desktop */
 .menu-toggle {
     display: none;
     position: fixed;
@@ -111,26 +151,26 @@ body {
     width: var(--tap-target);
     height: var(--tap-target);
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    background-color: var(--bg-secondary, #1c2541);
-    color: var(--text-main, #fff);
+    border: 1px solid var(--card-border);
+    background-color: var(--bg-secondary);
+    color: var(--text-main);
     font-size: 1.3rem;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
 }
 
 .menu-toggle:active {
     transform: scale(0.95);
 }
 
-/* Backdrop behind the open mobile sidebar */
 .sidebar-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.55);
+    background: rgba(5, 7, 12, 0.7);
+    backdrop-filter: blur(2px);
     z-index: 999;
 }
 
@@ -142,52 +182,58 @@ body {
    MAIN CONTENT AREA
    ========================================== */
 .main-content {
-    margin-left: var(--sidebar-width, 250px);
+    margin-left: var(--sidebar-width);
     flex-grow: 1;
-    padding: 30px;
-    width: calc(100% - var(--sidebar-width, 250px));
+    padding: 32px 36px;
+    width: calc(100% - var(--sidebar-width));
     min-height: 100vh;
-    background-color: var(--bg-primary, #0a1128);
+    background-color: var(--bg-primary);
 }
 
 .top-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 32px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--card-border);
     flex-wrap: wrap;
     gap: 12px;
 }
 
 .top-bar h1 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: 0.01em;
     font-size: var(--fs-h1);
-    color: var(--text-main, #ffffff);
+    color: var(--text-main);
 }
 
 .user-profile {
-    font-size: 0.95rem;
-    color: var(--text-muted, #8d99ae);
+    font-size: 0.9rem;
+    color: var(--text-muted);
     flex-wrap: wrap;
 }
 
 .user-profile strong {
-    color: var(--accent-blue, #31d6ff);
+    color: var(--accent-blue);
+    font-weight: 600;
 }
 
-/* Page Section Display Handling */
 .page {
     animation: fadeIn 0.4s ease-in-out;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
 h2 {
+    font-family: var(--font-display);
+    font-weight: 600;
     font-size: var(--fs-h2);
+    letter-spacing: 0.01em;
 }
 
 p, label, input, button, td, th {
@@ -195,25 +241,26 @@ p, label, input, button, td, th {
 }
 
 /* ==========================================
-   BUTTONS — polished states + touch targets
+   BUTTONS
    ========================================== */
 .btn-primary {
-    background-color: var(--accent-blue, #31d6ff);
-    color: #000000;
+    background-color: var(--accent-blue);
+    color: #04141a;
     border: none;
-    padding: 12px 25px;
+    padding: 12px 26px;
     border-radius: 8px;
     font-weight: 600;
+    letter-spacing: 0.01em;
     cursor: pointer;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     min-height: var(--tap-target);
-    transition: background-color 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
+    transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.25s ease;
 }
 
 .btn-primary:hover {
-    background-color: #00b4d8;
+    background-color: #52dcf5;
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(49, 214, 255, 0.25);
+    box-shadow: 0 8px 20px rgba(53, 201, 230, 0.25);
 }
 
 .btn-primary:active {
@@ -232,29 +279,28 @@ p, label, input, button, td, th {
 .sidebar nav a:focus-visible,
 .input-field:focus-visible,
 .toggle-switch:focus-visible {
-    outline: 2px solid var(--accent-blue, #31d6ff);
+    outline: 2px solid var(--accent-amber);
     outline-offset: 2px;
 }
 
-/* Any inline/small action buttons get a comfortable tap area on touch devices */
 button {
     min-height: var(--tap-target);
 }
 
-/* Small inline table-action buttons opt out of the full 44px height so tables stay compact,
-   but keep at least 36px + generous horizontal padding for accuracy */
 table button {
     min-height: 36px;
 }
 
 /* ==========================================
-   AUTH MODALS (login / register / forgot password)
+   AUTH MODALS — bounding-box signature on the
+   login card, echoing a detection frame
    ========================================== */
 .auth-modal {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, .9);
+    background: rgba(5, 8, 14, 0.92);
+    backdrop-filter: blur(3px);
     z-index: 9999;
     justify-content: center;
     align-items: center;
@@ -262,18 +308,44 @@ table button {
 }
 
 .auth-card {
+    position: relative;
     width: 380px;
     max-width: 100%;
     max-height: calc(100vh - 32px);
     overflow-y: auto;
-    background: #1e293b;
-    padding: 30px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, .1);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, .5);
+    background: var(--card-bg);
+    padding: 32px;
+    border-radius: 4px;
+    border: 1px solid var(--card-border);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
 }
 
-/* Loading spinner used inline on submit buttons */
+.auth-card::before,
+.auth-card::after {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    top: 10px;
+    pointer-events: none;
+}
+
+.auth-card::before {
+    left: 10px;
+    border-left: 2px solid var(--accent-amber);
+    border-top: 2px solid var(--accent-amber);
+}
+
+.auth-card::after {
+    right: 10px;
+    border-right: 2px solid var(--accent-amber);
+    border-top: 2px solid var(--accent-amber);
+}
+
+.auth-card h2 {
+    font-family: var(--font-display);
+}
+
 .btn-spinner {
     display: inline-block;
     width: 14px;
@@ -297,7 +369,7 @@ table button {
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    border-radius: 8px;
+    border-radius: 10px;
 }
 
 .table-responsive table {
@@ -307,18 +379,15 @@ table button {
 /* ==========================================
    BREAKPOINTS
    ========================================== */
-
-/* Tablet: 768px – 1024px */
 @media (max-width: 1024px) {
     :root {
-        --sidebar-width: 210px;
+        --sidebar-width: 216px;
     }
     .main-content {
         padding: 24px;
     }
 }
 
-/* Mobile: below 768px */
 @media (max-width: 768px) {
     .menu-toggle {
         display: flex;
@@ -327,7 +396,7 @@ table button {
     .sidebar {
         transform: translateX(-100%);
         width: min(80vw, 280px);
-        box-shadow: 4px 0 20px rgba(0, 0, 0, .4);
+        box-shadow: 4px 0 24px rgba(0, 0, 0, .5);
     }
 
     .sidebar.open {
@@ -338,7 +407,7 @@ table button {
         margin-left: 0;
         width: 100%;
         padding: 20px 16px;
-        padding-top: 70px; /* room for the fixed hamburger button */
+        padding-top: 70px;
     }
 
     .top-bar {
@@ -360,7 +429,7 @@ table button {
 
     .auth-card {
         width: 100%;
-        padding: 22px;
+        padding: 24px;
     }
 }
 

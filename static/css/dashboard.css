@@ -1,5 +1,5 @@
 /* ==========================================
-   DASHBOARD & STATS CARDS STYLES
+   DASHBOARD & STATS CARDS
    ========================================== */
 .grid {
     display: grid;
@@ -9,57 +9,115 @@
 }
 
 .card {
-    background-color: var(--card-bg, #111d4a);
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    min-width: 0; /* lets cards shrink inside the grid instead of overflowing */
+    position: relative;
+    background-color: var(--card-bg, #121826);
+    padding: 22px;
+    border-radius: 10px;
+    border: 1px solid var(--card-border, rgba(255,255,255,.07));
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    min-width: 0;
+    overflow: hidden;
+}
+
+/* top accent rail — reads as an instrument-panel seam */
+.card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-amber, #ffb627), transparent 70%);
+    opacity: 0.7;
 }
 
 .card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(49, 214, 255, 0.15);
+    border-color: rgba(53, 201, 230, 0.35);
+    box-shadow: 0 10px 26px rgba(53, 201, 230, 0.14);
 }
 
 .card h3 {
-    font-size: 0.9rem;
-    color: var(--text-muted, #8d99ae);
-    margin-bottom: 10px;
+    font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted, #8791a6);
+    margin-bottom: 12px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.08em;
 }
 
 .card h2 {
-    font-size: 2rem;
-    color: var(--accent-blue, #31d6ff);
-    font-weight: 700;
+    font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+    font-size: 2.1rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent-blue, #35c9e6);
+    letter-spacing: 0.01em;
 }
 
-/* Chart canvases must not force their parent card wider than the viewport */
 .card canvas {
     max-width: 100%;
 }
 
-/* Live Stream Box Styling */
+/* ==========================================
+   LIVE STREAM — bounding-box corners echo the
+   YOLO detection boxes the system itself draws
+   ========================================== */
 .stream-container {
+    position: relative;
     background-color: #000000;
-    border-radius: 12px;
+    border-radius: 10px;
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 400px;
     margin-top: 20px;
-    border: 2px solid rgba(49, 214, 255, 0.4);
-    box-shadow: 0 0 20px rgba(49, 214, 255, 0.2);
+    border: 1px solid var(--card-border, rgba(255,255,255,.07));
+    box-shadow: 0 0 0 1px rgba(53, 201, 230, 0.08), 0 12px 34px rgba(0, 0, 0, 0.5);
 }
+
+.stream-container::before,
+.stream-container::after,
+.ppe-status-panel::before,
+.ppe-status-panel::after {
+    content: "";
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.stream-container::before { top: 12px; left: 12px; border-left: 2px solid var(--accent-amber, #ffb627); border-top: 2px solid var(--accent-amber, #ffb627); }
+.stream-container::after  { bottom: 12px; right: 12px; border-right: 2px solid var(--accent-amber, #ffb627); border-bottom: 2px solid var(--accent-amber, #ffb627); }
 
 .stream-container img {
     max-width: 100%;
     height: auto;
     display: block;
+}
+
+.ppe-status-panel {
+    position: relative;
+}
+
+.ppe-status-panel::before { top: 0; left: 0; border-left: 2px solid rgba(53, 201, 230, .5); border-top: 2px solid rgba(53, 201, 230, .5); }
+.ppe-status-panel::after  { bottom: 0; right: 0; border-right: 2px solid rgba(53, 201, 230, .5); border-bottom: 2px solid rgba(53, 201, 230, .5); }
+
+.ppe-status-panel h3 {
+    font-family: var(--font-display, 'Space Grotesk', sans-serif);
+}
+
+#recognized-names {
+    font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+    font-size: 0.85rem;
+}
+
+#overall-status {
+    font-family: var(--font-display, 'Space Grotesk', sans-serif);
 }
 
 /* ==========================================
@@ -71,19 +129,36 @@ table {
 }
 
 table thead th {
-    background-color: var(--card-bg, #111d4a);
+    font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background-color: var(--bg-secondary, #0d121c);
+    color: var(--text-muted, #8791a6);
     text-align: left;
-    padding: 12px;
+    padding: 13px 12px;
     white-space: nowrap;
+    border-bottom: 1px solid var(--card-border, rgba(255,255,255,.07));
 }
 
 table tbody td {
     padding: 12px;
     white-space: nowrap;
+    font-size: 0.88rem;
+}
+
+table tbody td:first-child {
+    font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+    color: var(--text-muted, #8791a6);
+}
+
+table tbody tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    transition: background-color 0.15s ease;
 }
 
 table tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.03);
+    background-color: rgba(53, 201, 230, 0.04);
 }
 
 /* ==========================================
@@ -102,7 +177,7 @@ table tbody tr:hover {
     }
 
     .card {
-        padding: 16px;
+        padding: 18px;
     }
 
     .card h2 {
